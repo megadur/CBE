@@ -21,6 +21,12 @@ router.get('/:id', function (req, res) {
 });
 */
 
+var thisArg = {
+    router: router,
+    oracledb: oracledb,
+    connAttrs: connAttrs
+};
+
 router.get("/", function (req, res) {
     "use strict";
 
@@ -64,7 +70,7 @@ router.get("/", function (req, res) {
         });
     });
 });
-mrouter("/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID", "GUID")
 /* router.get("/:GUID", function (req, res) {
     "use strict";
 

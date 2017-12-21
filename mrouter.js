@@ -1,9 +1,5 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var oracledb = require('oracledb');
-
 module.exports = function(selector, sSQL, ...params) {
+    ({ router, oracledb, connAttrs } = this);
     router.get(selector, function (req, res) {
         "use strict";
     
