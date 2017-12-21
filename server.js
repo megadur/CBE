@@ -155,9 +155,6 @@ app.get('/account/:GUID', function (req, res) {
     });
 });
 
-
-
-
 // Http Method: GET
 // URI        : /user_profiles
 // Read all the user profiles
@@ -247,7 +244,6 @@ app.get('/user_profiles/:USER_NAME', function (req, res) {
         });
     });
 });
-
 
 
 var server = app.listen(3000, function () {

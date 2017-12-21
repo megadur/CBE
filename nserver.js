@@ -123,7 +123,7 @@ app.get('/user_profiles/:USER_NAME', function (req, res) {
             return;
         }
 
-        connection.execute("SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME", [req.params.USER_NAME], {
+        connection.execute("SELECT * FROM USER_PROFILES WHERE USER_NAME = :USER_NAME", [], {
             outFormat: oracledb.OBJECT // Return the result as Object
         }, function (err, result) {
             if (err || result.rows.length < 1) {
@@ -364,5 +364,5 @@ var server = app.listen(3000, function () {
     var host = server.address().address,
         port = server.address().port;
 
-    console.log(' Server is listening at http://%s:%s', host, port);
+    console.log(' mServer is listening at http://%s:%s', host, port);
 });
