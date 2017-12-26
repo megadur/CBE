@@ -19,7 +19,11 @@ var connAttrs1 = {
 }
 
 //app.configure(..);
-
+/*
+app.get('/account', function(req, res) {
+    res.send('respond with a account list resource');
+  });
+*/
 //app.get('/', ....)
 app.use('/bestand', require('./bestand'));    
 app.use('/account', require('./account'));    

@@ -2,7 +2,7 @@ module.exports = function(selector, sSQL, ...params) {
     ({ router, oracledb, connAttrs } = this);
     router.get(selector, function (req, res) {
         "use strict";
-    
+      
         oracledb.getConnection(connAttrs, function (err, connection) {
             if (err) {
                 // Error connecting to DB
@@ -14,9 +14,15 @@ module.exports = function(selector, sSQL, ...params) {
                 }));
                 return;
             }
-            params = params.map(e => req.params[e]);
+            var val;
+            for (var i in req.params) {
+                val = req.params[i];
+                console.log(val.path);
+                console.log(i);
+              }
+            var reqparams = params.map(e => req.params[String(e)]);
     
-            connection.execute(sSQL, params, {
+            connection.execute(sSQL, reqparams, {
                 outFormat: oracledb.OBJECT // Return the result as Object
             }, function (err, result) {
                 if (err) {
@@ -27,6 +33,8 @@ module.exports = function(selector, sSQL, ...params) {
                         detailed_message: err.message
                     }));
                 } else {
+                    console.log("Connection GET: " + selector + "=" + params);
+
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
                 }
@@ -36,7 +44,7 @@ module.exports = function(selector, sSQL, ...params) {
                         if (err) {
                             console.error(err.message);
                         } else {
-                            console.log("GET /user_profiles : Connection released");
+                           // console.log("Connection released GET: " + selector );
                         }
                     });
             });

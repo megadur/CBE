@@ -26,7 +26,8 @@ var thisArg = {
     oracledb: oracledb,
     connAttrs: connAttrs
 };
-
+mrouter.call(thisArg, "/", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE  rownum <= 10")
+/*
 router.get("/", function (req, res) {
     "use strict";
 
@@ -70,6 +71,7 @@ router.get("/", function (req, res) {
         });
     });
 });
+*/
 mrouter.call(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID", "GUID")
 /* router.get("/:GUID", function (req, res) {
     "use strict";
