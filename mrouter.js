@@ -14,12 +14,7 @@ module.exports = function(selector, sSQL, ...params) {
                 }));
                 return;
             }
-            var val;
-            for (var i in req.params) {
-                val = req.params[i];
-                console.log(val.path);
-                console.log(i);
-              }
+ 
             var reqparams = params.map(e => req.params[String(e)]);
     
             connection.execute(sSQL, reqparams, {

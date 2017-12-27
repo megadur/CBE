@@ -27,96 +27,15 @@ var thisArg = {
     connAttrs: connAttrs
 };
 mrouter.call(thisArg, "/", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE  rownum <= 10")
-/*
-router.get("/", function (req, res) {
-    "use strict";
-
-    oracledb.getConnection(connAttrs, function (err, connection) {
-        if (err) {
-            // Error connecting to DB
-            res.set('Content-Type', 'application/json');
-            res.status(500).send(JSON.stringify({
-                status: 500,
-                message: "Error connecting to DB",
-                detailed_message: err.message
-            }));
-            return;
-        }
-        var sSQL;
-        sSQL = "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE rownum <= 10";
-
-        connection.execute(sSQL, {}, {
-            outFormat: oracledb.OBJECT // Return the result as Object
-        }, function (err, result) {
-            if (err) {
-                res.set('Content-Type', 'application/json');
-                res.status(500).send(JSON.stringify({
-                    status: 500,
-                    message: "Error getting the user profile",
-                    detailed_message: err.message
-                }));
-            } else {
-                res.contentType('application/json').status(200);
-                res.send(JSON.stringify(result.rows));
-            }
-            // Release the connection
-            connection.release(
-                function (err) {
-                    if (err) {
-                        console.error(err.message);
-                    } else {
-                        console.log("GET /user_profiles : Connection released");
-                    }
-                });
-        });
-    });
-});
-*/
 mrouter.call(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID", "GUID")
-/* router.get("/:GUID", function (req, res) {
-    "use strict";
+//mrouter.call(thisArg, "/:GUID/:CMD", "SELECT 'EM' AS  TBL, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID/EM", " SELECT 'EM'  AS CMD, :GUID AS GUID, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID/PAR", "SELECT 'RNR' AS CMD, :GUID AS GUID, P.*  FROM IDMA_BESTANDS_OPDB_DATA.X_PARAMETER   P INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON P.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID/RNR", "SELECT 'RNR' AS CMD, :GUID AS GUID, R.*  FROM IDMA_BESTANDS_OPDB_DATA.X_RUFNUMMER   R INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=R.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID/SPR", "SELECT 'SPR' AS CMD, :GUID AS GUID, S.*  FROM IDMA_BESTANDS_OPDB_DATA.X_SPERRE      S INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=S.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/:GUID/INS", "SELECT 'INS' AS CMD, :GUID AS GUID, I.*  FROM IDMA_BESTANDS_OPDB_DATA.X_INSTANZ     I INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=I.STOCK_ID WHERE B.GUID=:GUID", "GUID")
+//mrouter.call(thisArg, "/:GUID/:CMD", "SELECT 'HUHU', :GUID, :CMD FROM DUAL", "GUID", "CMD")
+//mrouter.call(thisArg, "/:GUID/PAR", "SELECT :v_guid,  CASE WHEN 'EM'=:v_cmd THEN 'PAR' ELSE  'HUHU' END FROM DUAL ", "GUID", "CMD")
 
-    oracledb.getConnection(connAttrs, function (err, connection) {
-        if (err) {
-            // Error connecting to DB
-            res.set('Content-Type', 'application/json');
-            res.status(500).send(JSON.stringify({
-                status: 500,
-                message: "Error connecting to DB",
-                detailed_message: err.message
-            }));
-            return;
-        }
-        var sSQL;
-        var params;
-        sSQL = "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID";
-        params = [req.params.GUID];
-
-        connection.execute(sSQL, params, {
-            outFormat: oracledb.OBJECT // Return the result as Object
-        }, function (err, result) {
-            if (err) {
-                res.set('Content-Type', 'application/json');
-                res.status(500).send(JSON.stringify({
-                    status: 500,
-                    message: "Error getting the user profile",
-                    detailed_message: err.message
-                }));
-            } else {
-                res.contentType('application/json').status(200);
-                res.send(JSON.stringify(result.rows));
-            }
-            // Release the connection
-            connection.release(
-                function (err) {
-                    if (err) {
-                        console.error(err.message);
-                    } else {
-                        console.log("GET /user_profiles : Connection released");
-                    }
-                });
-        });
-    });
-}); */
 
 module.exports = router;

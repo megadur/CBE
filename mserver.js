@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
+debugger;
 
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
@@ -27,7 +28,7 @@ app.get('/account', function(req, res) {
 //app.get('/', ....)
 app.use('/bestand', require('./bestand'));    
 app.use('/account', require('./account'));    
-app.use('/admin', function(req, res, next) {  // GET 'http://www.example.com/admin/new'
+app.get('/admin', function(req, res, next) {  // GET 'http://www.example.com/admin/new'
   console.log(req.originalUrl); // '/admin/new'
   console.log(req.baseUrl); // '/admin'
   console.log(req.path); // '/new'
@@ -44,3 +45,6 @@ var server = app.listen(3300, function () {
 
     console.log(' Server is listening at http://%s:%s', host, port);
 });
+/*
+nodemon mserver.js
+*/
