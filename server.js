@@ -26,8 +26,9 @@ app.get('/account', function(req, res) {
   });
 */
 //app.get('/', ....)
-app.use('/bestand', require('./svc/bestand'));    
 app.use('/account', require('./svc/account'));    
+//app.use('/bestand', require('./svc/bestand'));    
+app.use('/auftrag', require('./svc/auftrag'));    
 app.get('/admin', function(req, res, next) {  // GET 'http://www.example.com/admin/new'
   console.log(req.originalUrl); // '/admin/new'
   console.log(req.baseUrl); // '/admin'

@@ -36,7 +36,7 @@ module.exports = function (selector, sSQL, ...params) {
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
                     console.log(formatted + " GET " + selector + "(" + reqparams + ") = length " + result.rows.length);
-                    //console.log(formatted + " SQL " + sSQL);
+                    console.log(formatted + " SQL " + sSQL);
                 }
                 // Release the connection
                 connection.release(
