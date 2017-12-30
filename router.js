@@ -1,8 +1,8 @@
-module.exports = function(selector, sSQL, ...params) {
+module.exports = function (selector, sSQL, ...params) {
     ({ router, oracledb, connAttrs } = this);
     router.get(selector, function (req, res) {
         "use strict";
-      
+
         oracledb.getConnection(connAttrs, function (err, connection) {
             if (err) {
                 // Error connecting to DB
@@ -14,9 +14,10 @@ module.exports = function(selector, sSQL, ...params) {
                 }));
                 return;
             }
- 
+
             var reqparams = params.map(e => req.params[String(e)]);
-    
+            var dateTime = require('node-datetime');
+
             connection.execute(sSQL, reqparams, {
                 outFormat: oracledb.OBJECT // Return the result as Object
             }, function (err, result) {
@@ -28,10 +29,14 @@ module.exports = function(selector, sSQL, ...params) {
                         detailed_message: err.message
                     }));
                 } else {
-                    console.log("Connection GET: " + selector + "=" + params);
+                    var dt = dateTime.create();
+                    var formatted = dt.format('Y-m-d H:M:S');
+                    console.log(formatted+"Connection GET: " + router.String);
 
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
+                    console.log(formatted + " GET " + selector + "(" + reqparams + ") = length " + result.rows.length);
+                    //console.log(formatted + " SQL " + sSQL);
                 }
                 // Release the connection
                 connection.release(
@@ -39,7 +44,7 @@ module.exports = function(selector, sSQL, ...params) {
                         if (err) {
                             console.error(err.message);
                         } else {
-                           // console.log("Connection released GET: " + selector );
+                            // console.log("Connection released GET: " + selector );
                         }
                     });
             });

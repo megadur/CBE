@@ -3,7 +3,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
-var mrouter = require("./mrouter");
+var mrouter = require("../router");
 
 var connAttrs = {
     "user": "IDMA_SELECT",
@@ -26,8 +26,8 @@ var thisArg = {
     oracledb: oracledb,
     connAttrs: connAttrs
 };
-mrouter.call(thisArg, "/", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE  rownum <= 10")
-mrouter.call(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.ACCOUNT A WHERE A.GUID=:GUID", "GUID")
+mrouter.call(thisArg, "/", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A WHERE  rownum <= 10")
+mrouter.call(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A WHERE A.GUID=:GUID", "GUID")
 //mrouter.call(thisArg, "/:GUID/:CMD", "SELECT 'EM' AS  TBL, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
 mrouter.call(thisArg, "/:GUID/EM", " SELECT 'EM'  AS CMD, :GUID AS GUID, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
 mrouter.call(thisArg, "/:GUID/PAR", "SELECT 'RNR' AS CMD, :GUID AS GUID, P.*  FROM IDMA_BESTANDS_OPDB_DATA.X_PARAMETER   P INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON P.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
