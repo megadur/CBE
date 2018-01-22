@@ -26,15 +26,28 @@ app.get('/account', function(req, res) {
   });
 */
 //app.get('/', ....)
-app.use('/account', require('./svc/account'));    
-//app.use('/bestand', require('./svc/bestand'));    
-app.use('/auftrag', require('./svc/auftrag'));    
-app.get('/admin', function(req, res, next) {  // GET 'http://www.example.com/admin/new'
-  console.log(req.originalUrl); // '/admin/new'
-  console.log(req.baseUrl); // '/admin'
-  console.log(req.path); // '/new'
-  next();
+app.use('/account', require('./svc/account'));
+app.use('/xerror', require('./svc/xerror'));
+app.use('/xauftrag', require('./svc/xauftrag'));
+app.use('/auftrag', require('./svc/auftrag'));
+app.use('/kampagne', require('./svc/kampagne'));
+
+app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
+    console.log('app.get admin');
+    console.log(req.originalUrl); // '/admin/new'
+    console.log(req.baseUrl); // '/admin'
+    console.log(req.path); // '/new'
+    next();
 });
+
+app.post('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
+    console.log('app.post admin');
+    console.log(req.originalUrl); // '/admin/new'
+    console.log(req.baseUrl); // '/admin'
+    console.log(req.path); // '/new'
+    next();
+});
+
 //app.use('/where/ever', require('./module-b'));    
 
 
