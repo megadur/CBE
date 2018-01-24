@@ -3,7 +3,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
-var mrouter = require("../router");
+var mrouter = require("../mrouter");
 
 var connAttrs = {
     "user": "IDMA_SELECT",
@@ -17,7 +17,7 @@ var thisArg = {
     connAttrs: connAttrs
 };
 
-mrouter.call(thisArg, "/", "SELECT \
+mrouter(thisArg, "/", "SELECT \
 CAMPAIGN_ID, SERVICE, TICKET, TS_CREATION, REPRO_SPERRE, REPRO_EM, REPRO_RUFNR, REPRO_PARAM, STATUS, ANZ_JOBS, DELAY, WAITING_PERIOD \
 FROM IDMA_AUFTRAGS_OPDB_DATA.KAMPAGNE")
 

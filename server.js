@@ -3,7 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
-debugger;
+//debugger;
 
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
