@@ -8,12 +8,12 @@ var oracledb = require('oracledb');
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
 
-var connAttrs = {
+var xconnAttrs = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
     "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
 }
-var connAttrs1 = {
+var xconnAttrs1 = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
     "connectString": "localhost:1521/XE"
