@@ -22,21 +22,53 @@ router.get('/:id', function (req, res) {
 */
 
 
+
 var thisArg = {
     router: router,
     oracledb: oracledb,
     connAttrs: connAttrs
 };
-mrouter(thisArg, "/", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A WHERE  rownum <= 10")
-mrouter(thisArg, "/:GUID", "SELECT 'ACCOUNT' AS TBL, A.* FROM IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A WHERE A.GUID=:GUID", "GUID")
-//mrouter(thisArg, "/:GUID/:CMD", "SELECT 'EM' AS  TBL, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-mrouter(thisArg, "/:GUID/EM", " SELECT 'EM'  AS CMD, :GUID AS GUID, E.*  FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON E.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-mrouter(thisArg, "/:GUID/PAR", "SELECT 'RNR' AS CMD, :GUID AS GUID, P.*  FROM IDMA_BESTANDS_OPDB_DATA.X_PARAMETER   P INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON P.STOCK_ID=B.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-mrouter(thisArg, "/:GUID/RNR", "SELECT 'RNR' AS CMD, :GUID AS GUID, R.*  FROM IDMA_BESTANDS_OPDB_DATA.X_RUFNUMMER   R INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=R.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-mrouter(thisArg, "/:GUID/SPR", "SELECT 'SPR' AS CMD, :GUID AS GUID, S.*  FROM IDMA_BESTANDS_OPDB_DATA.X_SPERRE      S INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=S.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-mrouter(thisArg, "/:GUID/INS", "SELECT 'INS' AS CMD, :GUID AS GUID, I.*  FROM IDMA_BESTANDS_OPDB_DATA.X_INSTANZ     I INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_BESTAND B ON B.STOCK_ID=I.STOCK_ID WHERE B.GUID=:GUID", "GUID")
-//mrouter(thisArg, "/:GUID/:CMD", "SELECT 'HUHU', :GUID, :CMD FROM DUAL", "GUID", "CMD")
-//mrouter(thisArg, "/:GUID/PAR", "SELECT :v_guid,  CASE WHEN 'EM'=:v_cmd THEN 'PAR' ELSE  'HUHU' END FROM DUAL ", "GUID", "CMD")
+mrouter(thisArg, "/", "SELECT 'BESTAND' AS TBL, B.* FROM IDMA_BESTANDS_OPDB_DATA.X_BESTAND B WHERE  rownum <= 1");
 
 
+function getBestand(departmentId, callback) {
+    oracledb.getConnection({
+            user: 'hr',
+            password: 'welcome',
+            connectString: 'server/XE'
+        },
+        function(err, connection) {
+            if (err) throw err;
+ 
+            connection.execute(
+                'select department_id, \n' +
+                '   department_name, \n' +
+                '   manager_id, \n' +
+                '   location_id \n' +
+                'from departments \n' +
+                'where department_id = :department_id',
+                {
+                    department_id: departmentId
+                },
+                function(err, results) {
+                    var department = {};
+ 
+                    if (err) {
+                        throw err;
+                    }
+ 
+                    department.id = results.rows[0][0];
+                    department.name = results.rows[0][1];
+                    department.managerId = results.rows[0][2];
+ 
+                    getLocationDetails(results.rows[0][3], department, connection, callback);
+                }
+            );
+        }
+    );
+}
+ 
+/*
+module.exports.getBestand = getBestand;
+*/
 module.exports = router;

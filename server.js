@@ -8,7 +8,7 @@ var oracledb = require('oracledb');
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
 
-var xconnAttrs = {
+var connAttrs = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
     "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
@@ -31,6 +31,8 @@ app.use('/xerror', require('./svc/xerror'));
 app.use('/xauftrag', require('./svc/xauftrag'));
 app.use('/auftrag', require('./svc/auftrag'));
 app.use('/kampagne', require('./svc/kampagne'));
+app.use('/bestand', require('./svc/bestand'));
+app.use('/bestan', require('./svc/bestan'));
 
 app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get admin');

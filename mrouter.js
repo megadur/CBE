@@ -1,3 +1,5 @@
+var best = require("./svc/best");
+
 function generateParams(req, params) {
     return params.map(e => {
         var a = e.split(".");
@@ -50,7 +52,13 @@ module.exports = function (arg, selector, sSQL, ...params) {
                     var dt = dateTime.create();
                     var formatted = dt.format('Y-m-d H:M:S');
                     console.log(formatted + " Connection GET: " + selector);
-
+                    console.log(formatted + " req.baseUrl: " + req.baseUrl);
+                    if(req.baseUrl == '/bestand'){
+                        result.rows.forEach(function(row) {
+                            console.log(formatted + " row[0][1]: " + row.STOCK_ID);                            
+                            best.getDepartment(connAttrs, 'selector', null);
+                        })
+                    }
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
                     console.log(formatted + " GET [" + selector + "](" + reqparams + ")("+ "(" + params + ") = length " + result.rows.length);
