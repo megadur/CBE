@@ -26,13 +26,14 @@ app.get('/account', function(req, res) {
   });
 */
 //app.get('/', ....)
+
 app.use('/account', require('./svc/account'));
-app.use('/xerror', require('./svc/xerror'));
-app.use('/xauftrag', require('./svc/xauftrag'));
 app.use('/auftrag', require('./svc/auftrag'));
 app.use('/kampagne', require('./svc/kampagne'));
-app.use('/bestand', require('./svc/bestand'));
-app.use('/bestan', require('./svc/bestan'));
+app.use('/xauftrag', require('./svc/xauftrag'));
+app.use('/xbestand', require('./svc/xbestand'));
+app.use('/xerror', require('./svc/xerror'));
+
 
 app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get admin');

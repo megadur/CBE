@@ -1,4 +1,3 @@
-var best = require("./svc/best");
 
 function generateParams(req, params) {
     return params.map(e => {
