@@ -19,13 +19,13 @@ router.use(function timeLog(req, res, next) {
     var dateTime = require('node-datetime');
     var dt = dateTime.create();
     var formatted = dt.format('Y-m-d H:M:S');
-    console.log(formatted + " router.use ");
+    console.log(formatted + " router.use " + req.baseUrl);
     next();
 })
 // define the home page route
 router.get('/', function (req, res) {
     var reqparams = generateParams(req, ["query.GUID"]);
-    console.log('router.get: ' + reqparams);
+    console.log('router.get: ' + req.path + '+' + reqparams);
     if (reqparams[0] !== '') {
         var r = getBestandByGuid(connAttrs, reqparams[0], function (bestand) {
             console.log('getBestandByGuid: ', bestand);
@@ -79,8 +79,8 @@ function getBestandByGuid(connAttrs, aGUID, callback) {
                 },
                 function (err, results) {
                     // Get the size of an object
-                    var size = Object.size(results.rows);
-                    xbestandList: XBestand[];
+                    //var size = Object.size(results.rows);
+                    var xbestandList={};
                     //bestand.stock = {};
                     //bestand.em = {};
                     //bestand.par = {};
@@ -90,7 +90,7 @@ function getBestandByGuid(connAttrs, aGUID, callback) {
                     }
                     for (var i in results.rows) {
                         var r = results.rows[i];
-                        var bestand;
+                        var bestand={};
                         bestand.stock = r;
                         var stockId = r.STOCK_ID;
                         console.log(stockId);

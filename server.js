@@ -30,11 +30,12 @@ app.get('/account', function(req, res) {
 app.use('/account', require('./svc/account'));
 app.use('/auftrag', require('./svc/auftrag'));
 app.use('/kampagne', require('./svc/kampagne'));
+app.use('/bestand', require('./svc/bestand'));
 app.use('/xauftrag', require('./svc/xauftrag'));
 app.use('/xbestand', require('./svc/xbestand'));
 app.use('/xerror', require('./svc/xerror'));
 
-
+/*
 app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get admin');
     console.log(req.originalUrl); // '/admin/new'
@@ -50,7 +51,7 @@ app.post('/admin', function (req, res, next) { // GET 'http://www.example.com/ad
     console.log(req.path); // '/new'
     next();
 });
-
+*/
 //app.use('/where/ever', require('./module-b'));    
 
 
