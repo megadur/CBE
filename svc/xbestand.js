@@ -35,38 +35,31 @@ router.use(function timeLog(req, res, next) {
 
 // define the home page route
 router.get('/', function (req, res) {
-    var reqparams = generateParams(req, ["query.GUID"]);
-    console.log('router.get: ' + reqparams);
-    if (reqparams[0] !== '') {
-        var r = getBestandListByGuid(connAttrs, reqparams[0], function (xbestandList) {
-            console.log('call getBestandListByGuid()) ');
-            res.send(JSON.stringify(xbestandList));
-            return;
+    var GUID = req.query.GUID;
+    var TONR = req.query.TONR;
+    var KDNR = req.query.KDNR;
+    console.log('router.get:', GUID, TONR, KDNR);
+    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, function (xbestandList) {
+        console.log('call getBestandListByGuid()) ');
+        res.send(JSON.stringify(xbestandList));
+        return;
 
-        });
-    }
+    });
 })
 // define the home page route
 router.get('/EM', function (req, res) {
-    var reqparams = generateParams(req, ["query.GUID"]);
-    console.log('router.get: ' + reqparams);
-    if (reqparams[0] !== '') {
-        var r = getBestandByGuid(connAttrs, reqparams[0], function (bestand) {
-            console.log('getBestandByGuid: ', bestand);
-
-            console.log('check: em:' & bestand.em == undefined & ', rnr:' & bestand.rnr == undefined & ', spr:' & bestand.spr == undefined & ', par:' & bestand.par == undefined & ', ins:' & bestand.ins == undefined);
-            if (!bestand.i) {
-                res.send(JSON.stringify(bestand));
+    var stockId = generateParams(req, ["query.STOCK_ID"]);
+    console.log('router.get: ' + req.baseUrl + stockId);
+    if (stockId !== '') {
+        oracledb.getConnection(connAttrs,
+            async function (err, connection) {
+                if (err) throw err;
+                var em = await getEMListByStockId(stockId, connection);
+                console.log('getEMListByStockId(' + stockId + '): ', em.length);
+                res.send(JSON.stringify(em));
                 return;
             }
-
-            if (true && bestand.em && bestand.rnr && bestand.spr && bestand.par && bestand.ins) {
-                res.send(JSON.stringify(bestand));
-                return;
-            }
-        });
-        //console.log('r: ', r);
-
+        );
     }
     //res.send('Birds home page')
     //res.send(JSON.stringify(results.rows));
@@ -80,45 +73,56 @@ router.get('/about', async function (req, res) {
 })
 var callbackCount = 0;
 
-function getBestandListByGuid(connAttrs, aGUID, callback) {
-    console.log('getBestandListByGuid: ', aGUID);
+function getBestandListByPar(connAttrs, aGUID, aTONR, aKDNR, callback) {
+    console.log('getBestandListByPar: ', aGUID, aTONR, aKDNR);
 
     oracledb.getConnection(connAttrs,
         function (err, connection) {
             if (err) throw err;
 
-            var sSQL = 'SELECT \'BESTAND\' AS TBL, B.* FROM IDMA_BESTANDS_OPDB_DATA.X_BESTAND B  \n' +
-                'WHERE B.GUID = :GUID';
-            //console.log('sSQL: ', sSQL);
+            var sSQL = 'SELECT \'BESTAND\' AS TBL, :GUID AS GUID, B.*, A.TO_NR, A.KDNR FROM IDMA_BESTANDS_OPDB_DATA.X_BESTAND B  \n' +
+                   // 'WHERE B.GUID = :GUID';
+                ' JOIN IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A ON A.GUID=B.GUID \n' +
+                ' WHERE 1=1 \n' +
+                ' AND (B.GUID=:GUID OR :GUID IS NULL ) \n' +
+                ' AND (A.TO_NR=:TONR OR :TONR IS NULL) \n' + 
+                ' AND (A.KDNR=:KDNR OR :KDNR IS NULL) \n' +
+                ' AND rownum <10 \n' +
+                ' ORDER BY B.STOCK_ID \n' +
+                '';
+                console.log('sSQL: ', sSQL);
+                //console.log('GUID: ', aGUID);
+                if(aGUID == '100049016041212390100001')
+                console.log('GUID: OK!', aGUID);
 
+                //                TONR: aTONR,
+                //KDNR: aKDNR
             connection.execute(sSQL, {
-                    GUID: aGUID
+                    GUID: aGUID , TONR: aTONR, KDNR: aKDNR
                 }, {
                     outFormat: oracledb.OBJECT
                 },
                 async function (err, results) {
-                    // Get the size of an object
-                    //var size = Object.size(results.rows);
-                    //xbestandList: XBestand[];
-                    var xbestandList = {};
                     if (err) {
+                        console.log('err: ', err);
                         throw err;
                     }
 
-                    var waiting = 0;
+                    var xbestandList = [];
+
                     for (var i in results.rows) {
                         var r = results.rows[i];
                         var bestand = {};
+                        bestand.id = i;
                         bestand.stock = r;
-                        var stockId = r.STOCK_ID;
-                        console.log('stockId(' + i + '): ' + stockId);
-                        if (stockId) {
+                        console.log('stockId(' + i + '): ' + r.STOCK_ID);
 
-                            await getBestandDet(bestand, connection);
+                        //await getBestandDet(bestand, connection);
 
-                            xbestandList[i] = bestand;
-                        }
+                        xbestandList[i] = bestand;
                     }
+                    //console.log('callback: ', xbestandList);
+ 
                     callback(xbestandList);
 
                 }
@@ -126,7 +130,6 @@ function getBestandListByGuid(connAttrs, aGUID, callback) {
         }
     );
 }
-
 
 function resolveAfter2Seconds() {
     return new Promise(resolve => {
@@ -145,9 +148,10 @@ async function getBestandDet(bestand, connection) {
 
     //var result = await resolveAfter2Seconds();
     //console.log(result);
-
+/*
     bestand.em = await getEMListByStockId(stockId, connection);
     console.log('getEMListByStockId(' + stockId + '): ', bestand.em.length);
+  
     bestand.par = await getPARListByStockId(stockId, connection);
     console.log('getPARListByStockId(' + stockId + '): ', bestand.par.length);
     bestand.rnr = await getRNRListByStockId(stockId, connection);
@@ -156,6 +160,7 @@ async function getBestandDet(bestand, connection) {
     console.log('getSPRListByStockId(' + stockId + '): ', bestand.spr.length);
     bestand.ins = await getINSListByStockId(stockId, connection);
     console.log('getINSListByStockId(' + stockId + '): ', bestand.ins.length);
+*/
 }
 
 function getEMListByStockId(StockId, connection) {
@@ -164,14 +169,15 @@ function getEMListByStockId(StockId, connection) {
         connection.execute(
             'SELECT \'EM\' AS TBL, E.*  \n' +
             ' FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E \n' +
-            ' WHERE E.STOCK_ID=:StockId', {
+            ' WHERE E.STOCK_ID=:StockId \n' +
+            ' ORDER BY E.EM_MATNO', {
                 StockId: StockId
             }, {
                 outFormat: oracledb.OBJECT
             },
             function (err, results) {
                 if (err) throw err;
-                //printResult(results);
+                printResult(results);
                 resolve(results.rows);
             }
         );
@@ -183,7 +189,8 @@ function getPARListByStockId(StockId, connection) {
         connection.execute(
             'SELECT \'PAR\' AS TBL, P.*  \n' +
             ' FROM IDMA_BESTANDS_OPDB_DATA.X_PARAMETER P  \n' +
-            ' WHERE P.STOCK_ID=:StockId', {
+            ' WHERE P.STOCK_ID=:StockId \n' +
+            ' ORDER BY P.PARAM_ID', {
                 StockId: StockId
             }, {
                 outFormat: oracledb.OBJECT
@@ -202,7 +209,8 @@ function getRNRListByStockId(StockId, connection) {
         connection.execute(
             'SELECT \'RNR\' AS TBL, R.*  \n' +
             ' FROM IDMA_BESTANDS_OPDB_DATA.X_RUFNUMMER R  \n' +
-            ' WHERE R.STOCK_ID=:StockId', {
+            ' WHERE R.STOCK_ID=:StockId\n' +
+            ' ORDER BY R.RN_UNSTRUCT', {
                 StockId: StockId
             }, {
                 outFormat: oracledb.OBJECT
