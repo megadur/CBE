@@ -3,6 +3,7 @@ function generateParams(req, params) {
     return params.map(e => {
         var a = e.split(".");
         return req[String(a[0])][String(a[1])];
+ //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
     });
 }
 
@@ -29,7 +30,11 @@ module.exports = function (arg, selector, sSQL, ...params) {
             }
 
 
+            console.log( " params: " + params);
             var reqparams = generateParams(req, params);
+            console.log( " sSQL: " + sSQL);
+            console.log( " reqparams " + reqparams);
+            
              /*
             connection.execute(sSQL, reqparams, {
                 outFormat: oracledb.OBJECT // Return the result as Object
@@ -40,6 +45,8 @@ module.exports = function (arg, selector, sSQL, ...params) {
                 outFormat: oracledb.OBJECT // Return the result as Object
             }, function (err, result) {
                 if (err) {
+                    console.log( " err " + err);
+     
                     res.set('Content-Type', 'application/json');
                     res.status(500).send(JSON.stringify({
                         status: 500,

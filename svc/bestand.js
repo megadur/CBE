@@ -29,18 +29,6 @@ router.get('/', function (req, res) {
     if (reqparams[0] !== '') {
         var r = getBestandByGuid(connAttrs, reqparams[0], function (bestand) {
             console.log('getBestandByGuid: ', bestand);
-            /*
-            if (bestand.em)
-                console.log('bestand.em: ');
-            if (bestand.rnr)
-                console.log('bestand.rnr: ');
-            if (bestand.spr)
-                console.log('bestand.spr: ');
-            if (bestand.par)
-                console.log('bestand.par: ');
-            if (bestand.ins)
-                console.log('bestand.ins: ');
-*/
             console.log('check: em:' & bestand.em == undefined & ', rnr:' & bestand.rnr == undefined & ', spr:' & bestand.spr == undefined & ', par:' & bestand.par == undefined & ', ins:' & bestand.ins == undefined);
             if (!bestand.i) {
                 res.send(JSON.stringify(bestand));
@@ -78,19 +66,15 @@ function getBestandByGuid(connAttrs, aGUID, callback) {
                     outFormat: oracledb.OBJECT
                 },
                 function (err, results) {
-                    // Get the size of an object
-                    //var size = Object.size(results.rows);
-                    var xbestandList={};
-                    //bestand.stock = {};
-                    //bestand.em = {};
-                    //bestand.par = {};
-
+   
+                    var xbestandList = {};
+  
                     if (err) {
                         throw err;
                     }
                     for (var i in results.rows) {
                         var r = results.rows[i];
-                        var bestand={};
+                        var bestand = {};
                         bestand.stock = r;
                         var stockId = r.STOCK_ID;
                         console.log(stockId);
@@ -123,7 +107,7 @@ function getBestandByGuid(connAttrs, aGUID, callback) {
                             });
                             if (true && bestand.em && bestand.rnr && bestand.spr && bestand.par && bestand.ins) {
                                 xbestandList[i] = bestand;
-                               // next;
+                                // next;
                             }
 
                         }

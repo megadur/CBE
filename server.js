@@ -33,6 +33,7 @@ app.use('/kampagne', require('./svc/kampagne'));
 app.use('/bestand', require('./svc/bestand'));
 app.use('/xauftrag', require('./svc/xauftrag'));
 app.use('/xbestand', require('./svc/xbestand'));
+app.use('/xmessage', require('./svc/xmessage'));
 app.use('/xerror', require('./svc/xerror'));
 
 /*
