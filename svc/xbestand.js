@@ -40,7 +40,50 @@ router.get('/', function (req, res) {
     var KDNR = req.query.KDNR;
     var STID = req.query.STID;
     console.log('router.get:', GUID, TONR, KDNR, STID);
-    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID, function (xbestandList) {
+    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID, false, false, function (xbestandList) {
+        console.log('call getBestandListByGuid()) ');
+        res.send(JSON.stringify(xbestandList));
+        return;
+
+    });
+})
+// define the home page route
+router.get('/MSG', function (req, res) {
+    var GUID = req.query.GUID;
+    var TONR = req.query.TONR;
+    var KDNR = req.query.KDNR;
+    var STID = req.query.STID;
+    console.log('router.getMSG:', GUID, TONR, KDNR, STID);
+    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID, false, true, function (xbestandList) {
+        console.log('call getBestandListByGuid()) ');
+        res.send(JSON.stringify(xbestandList));
+        return;
+
+    });
+})
+// define the home page route
+router.get('/DET', function (req, res) {
+    var GUID = req.query.GUID;
+    var TONR = req.query.TONR;
+    var KDNR = req.query.KDNR;
+    var STID = req.query.STID;
+    console.log('router.getDET:', GUID, TONR, KDNR, STID);
+    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID,  true,false, function (xbestandList) {
+        console.log('call getBestandListByGuid()) ');
+        res.send(JSON.stringify(xbestandList));
+        return;
+
+    });
+})
+
+// define the home page route
+router.get('/ALL', function (req, res) {
+    var GUID = req.query.GUID;
+    var TONR = req.query.TONR;
+    var KDNR = req.query.KDNR;
+    var STID = req.query.STID;
+    console.log('router.getALL:', GUID, TONR, KDNR, STID);
+    var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID,  true, true, function (xbestandList) {
         console.log('call getBestandListByGuid()) ');
         res.send(JSON.stringify(xbestandList));
         return;
@@ -74,7 +117,7 @@ router.get('/about', async function (req, res) {
 })
 var callbackCount = 0;
 
-function getBestandListByPar(connAttrs, aGUID, aTONR, aKDNR, aSTID, callback) {
+function getBestandListByPar(connAttrs, aGUID, aTONR, aKDNR, aSTID, okDet, okMsg, callback) {
     console.log('getBestandListByPar: ', aGUID, aTONR, aKDNR, aSTID);
 
     oracledb.getConnection(connAttrs,
@@ -92,7 +135,7 @@ function getBestandListByPar(connAttrs, aGUID, aTONR, aKDNR, aSTID, callback) {
                 ' AND rownum <10 \n' +
                 ' ORDER BY B.STOCK_ID \n' +
                 '';
-            console.log('sSQL: ', sSQL);
+            console.log('getBestandListByPar sSQL:\n ', sSQL);
 
             //                TONR: aTONR,
             //KDNR: aKDNR
@@ -118,8 +161,12 @@ function getBestandListByPar(connAttrs, aGUID, aTONR, aKDNR, aSTID, callback) {
                         bestand.id = i;
                         bestand.stock = r;
                         console.log('stockId(' + i + '): ' + r.STOCK_ID);
-
+                        
+                        if(okDet)
                         await getBestandDet(bestand, connection);
+
+                        if(okMsg)
+                        await getBestandMsg(bestand, connection);
 
                         xbestandList[i] = bestand;
                     }
@@ -143,7 +190,7 @@ function resolveAfter2Seconds() {
     });
 }
 
-async function getBestandDet(bestand, connection) {
+async function xgetBestandDet(bestand, connection) {
     var stockId;
     stockId = bestand.stock.STOCK_ID;
     console.log('getBestandDet(' + stockId + ') ');
@@ -173,13 +220,67 @@ async function getBestandDet(bestand, connection) {
     console.log('getERRListByStockId(' + stockId + '): ', bestand.err.length);
 
 }
+async function getBestand(bestand, connection) {
+    var stockId;
+    stockId = bestand.stock.STOCK_ID;
+    console.log('getBestandDet(' + stockId + ') ');
+
+    //var result = await resolveAfter2Seconds();
+    //console.log(result);
+
+    getBestandDet(bestand, connection);
+    getBestandMsg(bestand, connection);
+}
+async function getBestandDet(bestand, connection) {
+    var stockId;
+    stockId = bestand.stock.STOCK_ID;
+    console.log('getBestandDet(' + stockId + ') ');
+
+    //var result = await resolveAfter2Seconds();
+    //console.log(result);
+
+    bestand.em = await getEMListByStockId(stockId, connection);
+    console.log('getEMListByStockId(' + stockId + '): ', bestand.em.length);
+
+    bestand.par = await getPARListByStockId(stockId, connection);
+    console.log('getPARListByStockId(' + stockId + '): ', bestand.par.length);
+    bestand.rnr = await getRNRListByStockId(stockId, connection);
+    console.log('getRNRListByStockId(' + stockId + '): ', bestand.rnr.length);
+    bestand.spr = await getSPRListByStockId(stockId, connection);
+    console.log('getSPRListByStockId(' + stockId + '): ', bestand.spr.length);
+    bestand.ins = await getINSListByStockId(stockId, connection);
+    console.log('getINSListByStockId(' + stockId + '): ', bestand.ins.length);
+
+
+}
+
+async function getBestandMsg(bestand, connection) {
+    var stockId;
+    stockId = bestand.stock.STOCK_ID;
+    console.log('getBestandDet(' + stockId + ') ');
+
+    //var result = await resolveAfter2Seconds();
+    //console.log(result);
+
+  
+    bestand.xai = await getXAIListByStockId(stockId, connection);
+    console.log('getXAIListByStockId(' + stockId + '): ', bestand.xai.length);
+    bestand.xae = await getXAEListByStockId(stockId, connection);
+    console.log('getXAEListByStockId(' + stockId + '): ', bestand.xae.length);
+    bestand.msg = await getMSGListByStockId(stockId, connection);
+    console.log('getMSGListByStockId(' + stockId + '): ', bestand.msg.length);
+    bestand.err = await getERRListByStockId(stockId, connection);
+    console.log('getERRListByStockId(' + stockId + '): ', bestand.err.length);
+
+}
 
 function getEMListByStockId(StockId, connection) {
     return new Promise(resolve => {
 
         connection.execute(
-            'SELECT \'EM\' AS TBL, E.*  \n' +
+            'SELECT \'EM\' AS TBL, E.* , EM.CAPTION \n' +
             ' FROM IDMA_BESTANDS_OPDB_DATA.X_EINZELMODUL E \n' +
+            ' INNER JOIN IDMA_BESTANDS_OPDB_DATA.PRD_EM EM ON EM.EM_MATNO=E.EM_MATNO' +
             ' WHERE E.STOCK_ID=:StockId \n' +
             ' ORDER BY E.EM_MATNO', {
                 StockId: StockId
@@ -198,8 +299,9 @@ function getEMListByStockId(StockId, connection) {
 function getPARListByStockId(StockId, connection) {
     return new Promise(resolve => {
         connection.execute(
-            'SELECT \'PAR\' AS TBL, P.*  \n' +
+            'SELECT \'PAR\' AS TBL, P.*, PAR.*  \n' +
             ' FROM IDMA_BESTANDS_OPDB_DATA.X_PARAMETER P  \n' +
+            ' INNER JOIN IDMA_BESTANDS_OPDB_DATA.PRD_PARAM PAR ON PAR.PARAM_ID=P.PARAM_ID  \n' +
             ' WHERE P.STOCK_ID=:StockId \n' +
             ' ORDER BY P.PARAM_ID', {
                 StockId: StockId

@@ -1,10 +1,18 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var oracledb = require('oracledb');
+//var sqlite3 = require('sqlite3').verbose();
+//var db = new sqlite3.Database('data/fb.db');
 
 //debugger;
 
+/*
+db.serialize(function() {
+    db.run("CREATE TABLE IF NOT EXISTS counts (key TEXT, value INTEGER)");
+    db.run("INSERT INTO counts (key, value) VALUES (?, ?)", "counter", 0);
+    db.run("CREATE TABLE IF NOT EXISTS photo (id integer primary key AUTOINCREMENT, description TEXT, filepath TEXT, album_id INTEGER)");
+});
+*/
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
 
@@ -13,12 +21,26 @@ var connAttrs = {
     "password": "HappyNewYear2017",
     "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
 }
-var xconnAttrs1 = {
-    "user": "IDMA_SELECT",
-    "password": "HappyNewYear2017",
-    "connectString": "localhost:1521/XE"
-}
+/*
+app.get('/data', function(req, res){
+    db.get("SELECT value FROM counts", function(err, row){
+        res.json({ "count" : row.value });
+    });
+});
 
+app.post('/data', function(req, res){
+    db.run("UPDATE counts SET value = value + 1 WHERE key = ?", "counter", function(err, row){
+        if (err){
+            console.err(err);
+            res.status(500);
+        }
+        else {
+            res.status(202);
+        }
+        res.end();
+    });
+});
+*/
 //app.configure(..);
 /*
 app.get('/account', function(req, res) {
@@ -35,6 +57,10 @@ app.use('/xauftrag', require('./svc/xauftrag'));
 app.use('/xbestand', require('./svc/xbestand'));
 app.use('/xmessage', require('./svc/xmessage'));
 app.use('/xerror', require('./svc/xerror'));
+//app.use('/photo', require('./srouter'));
+// Attach the routers for their respective paths
+app.use('/fb', require('./svc/fehlerbild'));
+
 
 /*
 app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
