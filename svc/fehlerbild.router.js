@@ -21,7 +21,9 @@ fbRouter.get('/', lookupFB, function (req, res) {
 });
 
 // A POST to the root of a resource should create a new object
-fbRouter.post('/', insertFB_ByPar, function (req, res) {});
+fbRouter.post('/', insertFB_ByPar, function (req, res) {
+    res.json(req.fb);
+});
 // We specify a param in our path for the GET of a specific object
 fbRouter.get('/:id', lookupFB_ByID, function (req, res) {
     res.json(req.fb);
@@ -33,14 +35,42 @@ fbRouter.delete('/:id', lookupFB_ByID, function (req, res) {});
 
 
 function insertFB_ByPar(req, res, next) {
-    var sql = 'INSERT INTO fehlerbild (BILDNUMMER, CODE_INT, TEXT_EXT) VALUES (?, ?, ?)';
+    //var sql = 'INSERT INTO fehlerbild (FLT_BILDNUMMER, FLT_CODE_INT, FLT_TEXT_EXT) VALUES (?, ?, ?)';
+    var sSql = 'INSERT INTO Fehlerbild ('
+    sSql = sSql + 'FLT_BILDNUMMER, FLT_SO_TYPE_ID, FLT_STATUS, FLT_SPECIAL_ORDER_FLAG_ID, FLT_INC_TEXT_SHORT, FLT_INC_TEXT_LONG, FLT_CODE_INT, FLT_TEXT_INT, FLT_CODE_EXT, FLT_TEXT_EXT, FLT_SYS, FLT_TASK, FLT_HANDLING, ';
+    sSql = sSql + 'KATEGORIE, STATUS, SYSTEM, BEDINGUNG, URSACHE, ERSTELLT_TS, ERSTELLT_NAME, GEAENDERT_TS, GEAENDERT_NAME, GUELTIG_VON_TS, GUELTIG_BIS_TS';
+    sSql = sSql + ') VALUES(';
+    sSql = sSql + '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
+    sSql = sSql +  ');';
     // Retrieve the data to insert from the POST body
     var data = [
-        req.body.BILDNUMMER,
-        req.body.CODE_INT,
-        req.body.TEXT_EXT
+        req.body.FLT_BILDNUMMER, 
+        req.body.FLT_SO_TYPE_ID, 
+        req.body.FLT_STATUS, 
+        req.body.FLT_SPECIAL_ORDER_FLAG_ID, 
+        req.body.FLT_INC_TEXT_SHORT, 
+        req.body.FLT_INC_TEXT_LONG, 
+        req.body.FLT_CODE_INT, 
+        req.body.FLT_TEXT_INT, 
+        req.body.FLT_CODE_EXT, 
+        req.body.FLT_TEXT_EXT, 
+        req.body.FLT_SYS, 
+        req.body.FLT_TASK, 
+        req.body.FLT_HANDLING, 
+        req.body.KATEGORIE, 
+        req.body.STATUS, 
+        req.body.SYSTEM, 
+        req.body.BEDINGUNG, 
+        req.body.URSACHE, 
+        req.body.ERSTELLT_TS, 
+        req.body.ERSTELLT_NAME, 
+        req.body.GEAENDERT_TS, 
+        req.body.GEAENDERT_NAME, 
+        req.body.GUELTIG_VON_TS, 
+        req.body.GUELTIG_BIS_TS
     ];
-    db.run(sql, data, function (err, result) {
+    console.error(sSql);
+    db.run(sSql, data, function (err, result) {
         if (err) {
             // We shield our clients from internal errors, but log them
             console.error(err);

@@ -15,7 +15,72 @@ db.serialize(function() {
 */
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
+var connAttrList1 = [{
+        "ET2": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
 
+        "ET3": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+
+    }
+]
+var connAttrList = [{
+        "Name": "ET2",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
+        "Name": "ET3",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
+        "Name": "TU",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
+        "Name": "CIT2",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
+        "Name": "CIT4",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    },
+    {
+        "Name": "CTU2",
+        "Werte": {
+            "user": "IDMA_SELECT",
+            "password": "HappyNewYear2017",
+            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
+        }
+    }
+]
 var connAttrs = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
@@ -61,24 +126,32 @@ app.use('/xerror', require('./svc/xerror.router'));
 // Attach the routers for their respective paths
 app.use('/fb', require('./svc/fehlerbild.router'));
 
+app.get('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'
+    console.log('app.get config');
+    console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
+    console.log("req.baseUrl:" + req.baseUrl); // '/admin'
+    console.log("req.path:" + req.path); // '/new'
+    connAttrs= connAttrList.map(x => x.Name['ET3']);
+    next();
+});
 
-/*
+
 app.get('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get admin');
-    console.log(req.originalUrl); // '/admin/new'
-    console.log(req.baseUrl); // '/admin'
-    console.log(req.path); // '/new'
+    console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
+    console.log("req.baseUrl:" + req.baseUrl); // '/admin'
+    console.log("req.path:" + req.path); // '/new'
     next();
 });
 
 app.post('/admin', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.post admin');
-    console.log(req.originalUrl); // '/admin/new'
-    console.log(req.baseUrl); // '/admin'
-    console.log(req.path); // '/new'
+    console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
+    console.log("req.baseUrl:" + req.baseUrl); // '/admin'
+    console.log("req.path:" + req.path); // '/new'
     next();
 });
-*/
+
 //app.use('/where/ever', require('./module-b'));    
 
 
