@@ -49,17 +49,17 @@ app.get('/account', function(req, res) {
 */
 //app.get('/', ....)
 
-app.use('/account', require('./svc/account'));
-app.use('/auftrag', require('./svc/auftrag'));
-app.use('/kampagne', require('./svc/kampagne'));
-app.use('/bestand', require('./svc/bestand'));
-app.use('/xauftrag', require('./svc/xauftrag'));
-app.use('/xbestand', require('./svc/xbestand'));
-app.use('/xmessage', require('./svc/xmessage'));
-app.use('/xerror', require('./svc/xerror'));
+app.use('/account', require('./svc/account.router'));
+app.use('/auftrag', require('./svc/auftrag.router'));
+app.use('/kampagne', require('./svc/kampagne.router'));
+app.use('/bestand', require('./svc/bestand.router'));
+app.use('/xauftrag', require('./svc/xauftrag.router'));
+app.use('/xbestand', require('./svc/xbestand.router'));
+app.use('/xmessage', require('./svc/xmessage.router'));
+app.use('/xerror', require('./svc/xerror.router'));
 //app.use('/photo', require('./srouter'));
 // Attach the routers for their respective paths
-app.use('/fb', require('./svc/fehlerbild'));
+app.use('/fb', require('./svc/fehlerbild.router'));
 
 
 /*
