@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var db = require("./db");
+
 //var sqlite3 = require('sqlite3').verbose();
 //var db = new sqlite3.Database('data/fb.db');
 
@@ -15,73 +17,8 @@ db.serialize(function() {
 */
 // Use body parser to parse JSON body
 app.use(bodyParser.json());
-var connAttrList1 = [{
-        "ET2": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
 
-        "ET3": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-
-    }
-]
-var connAttrList = [{
-        "Name": "ET2",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
-        "Name": "ET3",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
-        "Name": "TU",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
-        "Name": "CIT2",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
-        "Name": "CIT4",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    },
-    {
-        "Name": "CTU2",
-        "Werte": {
-            "user": "IDMA_SELECT",
-            "password": "HappyNewYear2017",
-            "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
-        }
-    }
-]
-var connAttrs = {
+var xconnAttrs = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
     "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
@@ -114,6 +51,7 @@ app.get('/account', function(req, res) {
 */
 //app.get('/', ....)
 
+// Attach the routers for their respective paths
 app.use('/account', require('./svc/account.router'));
 app.use('/auftrag', require('./svc/auftrag.router'));
 app.use('/kampagne', require('./svc/kampagne.router'));
@@ -122,8 +60,6 @@ app.use('/xauftrag', require('./svc/xauftrag.router'));
 app.use('/xbestand', require('./svc/xbestand.router'));
 app.use('/xmessage', require('./svc/xmessage.router'));
 app.use('/xerror', require('./svc/xerror.router'));
-//app.use('/photo', require('./srouter'));
-// Attach the routers for their respective paths
 app.use('/fb', require('./svc/fehlerbild.router'));
 
 app.get('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'
@@ -131,7 +67,18 @@ app.get('/config', function (req, res, next) { // GET 'http://www.example.com/ad
     console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
     console.log("req.baseUrl:" + req.baseUrl); // '/admin'
     console.log("req.path:" + req.path); // '/new'
-    connAttrs= connAttrList.map(x => x.Name['ET3']);
+    
+    // TODO: res.send(JSON.stringify(db.getConn()));
+    res.send(JSON.stringify(db.setConn(req.query.db_name)));
+    next();
+});
+app.put('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'
+    console.log('app.put config');
+    console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
+    console.log("req.baseUrl:" + req.baseUrl); // '/admin'
+    console.log("req.path:" + req.path); // '/new'
+    
+    res.send(JSON.stringify(db.setConn(req.query.db_name)));
     next();
 });
 
@@ -157,7 +104,8 @@ app.post('/admin', function (req, res, next) { // GET 'http://www.example.com/ad
 
 var server = app.listen(3300, function () {
     "use strict";
-
+    db.setConn('ET3');
+    // db.setConn('CIT2');
     var host = server.address().address,
         port = server.address().port;
 

@@ -4,13 +4,14 @@ var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
 var mrouter = require("../mrouter");
+var db = require("../db");
 
-var connAttrs = {
+var xconnAttrs = {
     "user": "IDMA_SELECT",
     "password": "HappyNewYear2017",
     "connectString": "10.171.128.46:51521/IDMET3AB.tsystems.com"
 }
-
+connAttrs =db.getConn();
 // GET users listing. */
 /*
 router.get('/', function (req, res) {
@@ -21,6 +22,7 @@ router.get('/:id', function (req, res) {
 });
 */
 
+console.log( "accrouter.connectString: " + connAttrs.connectString);
 
 var thisArg = {
     router: router,

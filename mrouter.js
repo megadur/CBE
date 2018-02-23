@@ -1,9 +1,10 @@
+var db = require("./db");
 
 function generateParams(req, params) {
     return params.map(e => {
         var a = e.split(".");
         return req[String(a[0])][String(a[1])];
- //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
+        //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
     });
 }
 
@@ -16,6 +17,13 @@ module.exports = function (arg, selector, sSQL, ...params) {
 
     router.get(selector, function (req, res) {
         "use strict";
+        
+        var dateTime = require('node-datetime');
+        var dt = dateTime.create();
+        var fdt = dt.format('Y-m-d H:M:S');
+        console.log(fdt +  " mrouter: db.connectString: " + db.getConn().connectString);
+        connAttrs = db.getConn();
+        console.log(fdt +  " mrouter: router.get.connectString: " + connAttrs.connectString);
 
         oracledb.getConnection(connAttrs, function (err, connection) {
             if (err) {
@@ -23,19 +31,19 @@ module.exports = function (arg, selector, sSQL, ...params) {
                 res.set('Content-Type', 'application/json');
                 res.status(500).send(JSON.stringify({
                     status: 500,
-                    message: "Error connecting to DB",
+                    message: fdt +  " mrouter: Error connecting to DB",
                     detailed_message: err.message
                 }));
                 return;
             }
 
 
-            console.log( " params: " + params);
+            // console.log( " params: " + params);
             var reqparams = generateParams(req, params);
-            console.log( " sSQL: " + sSQL);
-            console.log( " reqparams " + reqparams);
-            
-             /*
+            // console.log( " sSQL: " + sSQL);
+            // console.log( " reqparams " + reqparams);
+
+            /*
             connection.execute(sSQL, reqparams, {
                 outFormat: oracledb.OBJECT // Return the result as Object
             },handleCall(err, res, reqparams));
@@ -45,30 +53,27 @@ module.exports = function (arg, selector, sSQL, ...params) {
                 outFormat: oracledb.OBJECT // Return the result as Object
             }, function (err, result) {
                 if (err) {
-                    console.log( " err " + err);
-     
+                    console.log(fdt + " mrouter:  err " + err);
+
                     res.set('Content-Type', 'application/json');
                     res.status(500).send(JSON.stringify({
                         status: 500,
-                        message: "Error getting the user profile",
+                        message: "mrouter: Error getting the user profile",
                         detailed_message: err.message
                     }));
                 } else {
-                    var dateTime = require('node-datetime');
-                    var dt = dateTime.create();
-                    var formatted = dt.format('Y-m-d H:M:S');
-                    console.log(formatted + " Connection GET: " + selector);
-                    console.log(formatted + " req.baseUrl: " + req.baseUrl);
-                    if(req.baseUrl == '/bestand'){
-                        result.rows.forEach(function(row) {
-                            console.log(formatted + " row[0][1]: " + row.STOCK_ID);                            
+                    console.log(fdt + " mrouter:  Connection GET: " + selector);
+                    console.log(fdt + " mrouter:  req.baseUrl: " + req.baseUrl);
+                    if (req.baseUrl == '/bestand') {
+                        result.rows.forEach(function (row) {
+                            console.log(fdt+ " mrouter:  row[0][1]: " + row.STOCK_ID);
                             best.getDepartment(connAttrs, 'selector', null);
                         })
                     }
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
-                    console.log(formatted + " GET [" + selector + "](" + reqparams + ")("+ "(" + params + ") = length " + result.rows.length);
-                    console.log(formatted + " SQL " + sSQL);
+                    console.log(fdt+ " GET [" + selector + "](" + reqparams + ")(" + "(" + params + ") = length " + result.rows.length);
+                    // console.log(fdt+ " SQL " + sSQL);
                 }
                 // Release the connection
                 connection.release(
@@ -108,7 +113,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
             }
 
             var reqparams = generateParams(req, params);
-        
+
             connection.execute(sSQL, reqparams, {
                     autoCommit: true,
                     outFormat: oracledb.OBJECT // Return the result as Object
@@ -127,7 +132,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                         var dt = dateTime.create();
                         var formatted = dt.format('Y-m-d H:M:S');
                         console.log(formatted + " Connection POST: " + selector);
-    
+
                         // Successfully created the resource
                         res.status(201).set('Location', '/user_profiles/' + req.body.USER_NAME).end();
                         console.log(formatted + " POST " + selector + "(" + reqparams + ") = length " + result.rows.length);
@@ -205,4 +210,5 @@ module.exports = function (arg, selector, sSQL, ...params) {
 
         });
     });
+
 }

@@ -28,11 +28,14 @@ fbRouter.post('/', insertFB_ByPar, function (req, res) {
 fbRouter.get('/:id', lookupFB_ByID, function (req, res) {
     res.json(req.fb);
 });
+
 // Similar to the GET on an object, to update it we can PATCH
 fbRouter.patch('/:id', lookupFB_ByID, function (req, res) {});
-// Delete a specific object
-fbRouter.delete('/:id', lookupFB_ByID, function (req, res) {});
 
+// Delete a specific object
+fbRouter.delete('/:id',  deleteFB_ByID, function (req, res) {    
+    res.json(req.fb);
+});
 
 function insertFB_ByPar(req, res, next) {
     //var sql = 'INSERT INTO fehlerbild (FLT_BILDNUMMER, FLT_CODE_INT, FLT_TEXT_EXT) VALUES (?, ?, ?)';
@@ -156,6 +159,28 @@ function lookupFB_ByID(req, res, next) {
         // Its data is now made available in our handler function
         req.fb = rows[0];
         console.log('lookupFB_ByID rowid ' + req.fb.id);
+        next();
+    });
+}
+
+function deleteFB_ByID(req, res, next) {
+    // We access the ID param on the request object
+    var id = req.params.id;
+    console.log('deleteFB_ByID ' + id);
+    // Build an SQL query to select the resource object by ID
+    var sql = 'DELETE FROM fehlerbild WHERE id = ?';
+    db.run(sql, id, function (err, rows) {
+        if (err) {
+            console.error(err);
+            res.statusCode = 500;
+            return res.json({
+                errors: ['Could not delete fehlerbild']
+            });
+        }
+
+        // By attaching a property to the request
+        // Its data is now made available in our handler function
+        console.log('OK deleteFB_ByID rowid ' + id);
         next();
     });
 }

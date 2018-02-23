@@ -44,7 +44,6 @@ photoRouter.delete('/:id', lookupPhoto, function (req, res) {});
 // Attach the routers for their respective paths
 app.use('/photo', photoRouter);
 
-
 function lookupPhoto(req, res, next) {
     // We access the ID param on the request object
     var photoId = req.params.id;
