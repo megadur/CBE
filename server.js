@@ -57,6 +57,7 @@ app.use('/auftrag', require('./svc/auftrag.router'));
 app.use('/kampagne', require('./svc/kampagne.router'));
 app.use('/bestand', require('./svc/bestand.router'));
 app.use('/xauftrag', require('./svc/xauftrag.router'));
+app.use('/xauftragext', require('./svc/xauftragext.router'));
 app.use('/xbestand', require('./svc/xbestand.router'));
 app.use('/xmessage', require('./svc/xmessage.router'));
 app.use('/xerror', require('./svc/xerror.router'));

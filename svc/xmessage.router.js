@@ -17,13 +17,17 @@ var thisArg = {
     connAttrs: connAttrs
 };
 
-mrouter(thisArg, "", "SELECT \
+mrouter(thisArg, "", "SELECT XM.*, \
  dbms_lob.substr(XM.MESSAGE, 4000, 1) AS MSG \
  FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
 WHERE 1=1 \
-AND (XM.ID=:MDG_ID OR :MDG_ID IS NULL)  \
+AND (XM.ID=:MSG_ID OR :MSG_ID IS NULL)  \
+AND (XM.SO_ID=:SO_ID OR :SO_ID IS NULL)  \
 AND  rownum <= 11 \
-","query.MSG_ID")
+"
+, "query.MSG_ID","query.MSG_ID"
+, "query.SO_ID","query.SO_ID"
+)
 
 
 module.exports = router;

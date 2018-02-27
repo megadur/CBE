@@ -11,6 +11,12 @@ function generateParams(req, params) {
                     //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
         });    
 }
+function log(sLog){
+    var dateTime = require('node-datetime');
+    var dt = dateTime.create();
+    var fdt = dt.format('Y-m-d H:M:S');
+    console.log(fdt +sLog);
+}
 
 module.exports = function (arg, selector, sSQL, ...params) {
     ({
@@ -18,16 +24,12 @@ module.exports = function (arg, selector, sSQL, ...params) {
         oracledb,
         connAttrs
     } = arg);
-
     router.get(selector, function (req, res) {
         "use strict";
-        
-        var dateTime = require('node-datetime');
-        var dt = dateTime.create();
-        var fdt = dt.format('Y-m-d H:M:S');
-        console.log(fdt +  " mrouter: db.connectString: " + db.getConn().connectString);
+                
+        log( " mrouter: db.connectString: " + db.getConn().connectString);
         connAttrs = db.getConn();
-        console.log(fdt +  " mrouter: router.get.connectString: " + connAttrs.connectString);
+        log(  " mrouter: router.get.connectString: " + connAttrs.connectString);
 
         oracledb.getConnection(connAttrs, function (err, connection) {
             if (err) {
@@ -44,8 +46,8 @@ module.exports = function (arg, selector, sSQL, ...params) {
 
             // console.log( " params: " + params);
             var reqparams = generateParams(req, params);
-             console.log( " sSQL: " + sSQL);
-             console.log( " reqparams " + reqparams);
+             log( " sSQL: " + sSQL);
+             log( " reqparams " + reqparams);
 
             /*
             connection.execute(sSQL, reqparams, {
@@ -66,17 +68,17 @@ module.exports = function (arg, selector, sSQL, ...params) {
                         detailed_message: err.message
                     }));
                 } else {
-                    console.log(fdt + " mrouter:  Connection GET: " + selector);
-                    console.log(fdt + " mrouter:  req.baseUrl: " + req.baseUrl);
+                    log( " mrouter:  Connection GET: " + selector);
+                    log(" mrouter:  req.baseUrl: " + req.baseUrl);
                     if (req.baseUrl == '/bestand') {
                         result.rows.forEach(function (row) {
-                            console.log(fdt+ " mrouter:  row[0][1]: " + row.STOCK_ID);
+                            log( " mrouter:  row[0][1]: " + row.STOCK_ID);
                             best.getDepartment(connAttrs, 'selector', null);
                         })
                     }
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
-                    console.log(fdt+ " GET [" + selector + "](" + reqparams + ")(" + "(" + params + ") = length " + result.rows.length);
+                    log( " GET [" + selector + "](" + reqparams + ")(" + "(" + params + ") = length " + result.rows.length);
                    //  console.log(fdt+ " SQL " + sSQL);
                 }
                 // Release the connection
