@@ -1,11 +1,15 @@
 var db = require("./db");
 
 function generateParams(req, params) {
-    return params.map(e => {
-        var a = e.split(".");
-        return req[String(a[0])][String(a[1])];
-        //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
-    });
+        return params.map(e => {
+            var a = e.split(".");
+            if(a.length>1){
+                return req[String(a[0])][String(a[1])];
+            }
+            else
+                return null;
+                    //       return String(a[1]) +': \''+ req[String(a[0])][String(a[1])] + '\'';
+        });    
 }
 
 module.exports = function (arg, selector, sSQL, ...params) {
@@ -40,8 +44,8 @@ module.exports = function (arg, selector, sSQL, ...params) {
 
             // console.log( " params: " + params);
             var reqparams = generateParams(req, params);
-            // console.log( " sSQL: " + sSQL);
-            // console.log( " reqparams " + reqparams);
+             console.log( " sSQL: " + sSQL);
+             console.log( " reqparams " + reqparams);
 
             /*
             connection.execute(sSQL, reqparams, {
@@ -73,7 +77,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                     res.contentType('application/json').status(200);
                     res.send(JSON.stringify(result.rows));
                     console.log(fdt+ " GET [" + selector + "](" + reqparams + ")(" + "(" + params + ") = length " + result.rows.length);
-                    // console.log(fdt+ " SQL " + sSQL);
+                   //  console.log(fdt+ " SQL " + sSQL);
                 }
                 // Release the connection
                 connection.release(
