@@ -28,45 +28,57 @@ mrouter(thisArg, "/FLT", "SELECT"  +
 \r\n AND (XE.CODE_INT=:CODE_INT OR :CODE_INT IS NULL)  \
 \r\n ORDER BY XE.EO_ID \
 "
-,"query.FLT_CODE_INT","query.FLT_CODE_INT"
+,"query.CODE_INT","query.CODE_INT"
 )
 
-/*
- if (req.query.LAST_VAL) {sSQL = sSQL + ' AND ? > ? '; data.push( req.query.ORDER_BY);data.push( '\''+req.query.LAST_VAL+'\'');}
-    if (req.query.ORDER_BY) {sSQL = sSQL + ' ORDER BY  ? '; data.push( req.query.ORDER_BY);}
-    if (req.query.PAGE_SIZE) {sSQL = sSQL + ' LIMIT  ? '; data.push( req.query.PAGE_SIZE);}
 
-    \r\n XA.SO_TYPE_ID, XA.STATUS \
-,SOF.SPECIAL_ORDER_FLAG_ID, SOF.NAME \
-,XE.*, XE.HANDLING \
- 
-    */
-   // dbms_lob.substr(XE.INC_TEXT_LONG , 400,  1),
-mrouter(thisArg, "", "SELECT " +
-" 'SELECT' AS QT, '" + db.getEnv() + "' AS QE, " + 
-" XE.ID, XE.EO_ID, XE.CODE_INT, XE.TEXT_INT, XE.SYS,XE.TS_CREATED, XA.SO_TYPE_ID, XA.STATUS  \
-\r\n FROM IDMA_AUFTRAGS_OPDB_DATA.X_ERROR XE \
-\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG XA ON XE.SO_ID=XA.SO_ID \
-\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG_EXT_2_SOF XAE2S ON XAE2S.EO_ID=XA.EO_ID \
-\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.SPECIAL_ORDER_FLAG SOF ON SOF.SPECIAL_ORDER_FLAG_ID=XAE2S.SPECIAL_ORDER_FLAG_ID \
-\r\n WHERE 1=1 \
-\r\n AND (XA.SO_TYPE_ID=:SO_TYPE_ID OR :SO_TYPE_ID IS NULL)  \
-\r\n AND (XA.STATUS=:STATUS OR :STATUS IS NULL)  \
-\r\n AND (XE.CODE_INT=:CODE_INT OR :CODE_INT IS NULL)  \
-\r\n AND (XE.SYS=:SYS OR :SYS IS NULL)  \
-\r\n AND (rownum<=:MAX_ROWS OR :MAX_ROWS IS NULL)  \
-\r\n AND (XE.EO_ID>=:MAX_VAL OR :MAX_VAL IS NULL)  \
-\r\n AND rownum <= 10 \
-\r\n ORDER BY XE.EO_ID \
-"
-,"query.FLT_SO_TYPE_ID","query.FLT_SO_TYPE_ID"
-,"query.FLT_STATUS","query.FLT_STATUS"
-,"query.FLT_CODE_INT","query.FLT_CODE_INT"
-,"query.FLT_SYS","query.FLT_SYS"
+// listet TOP 10 mit exaktem Filter
+mrouter(thisArg, "", 
+"\r\nSELECT " + 
+"\r\n  'SELECT' AS QT" + 
+"\r\n, 'ET3' AS QE" + 
+"\r\n, E.*" + 
+"\r\n, AI.SO_ID" + 
+"\r\n, AX.EO_ID" + 
+"\r\n FROM IDMA_AUFTRAGS_OPDB_DATA.X_ERROR E" + 
+"\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG AI ON E.SO_ID=AI.SO_ID" + 
+"\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG_EXT AX  ON AX.EO_ID=AI.EO_ID" + 
+"\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG_EXT_2_SOF AX2S ON AX2S.EO_ID=AX.EO_ID" + 
+"\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.SPECIAL_ORDER_FLAG SOF ON SOF.SPECIAL_ORDER_FLAG_ID=AX2S.SPECIAL_ORDER_FLAG_ID" + 
+"\r\n WHERE 1=1" + 
+"\r\n AND (AI.SO_TYPE_ID=:SO_TYPE_ID OR :SO_TYPE_ID IS NULL)" + 
+"\r\n AND (AI.STATUS=:STATUS OR :STATUS IS NULL)" + 
+"\r\n AND (AX2S.SPECIAL_ORDER_FLAG_ID=:SPECIAL_ORDER_FLAG_ID OR :SPECIAL_ORDER_FLAG_ID IS NULL)" + 
+"\r\n AND (E.INC_TEXT_SHORT=:INC_TEXT_SHORT OR :INC_TEXT_SHORT IS NULL)" + 
+// "\r\n AND (E.INC_TEXT_LONG=:INC_TEXT_LONG OR :INC_TEXT_LONG IS NULL)" + 
+"\r\n AND (E.CODE_INT=:CODE_INT OR :CODE_INT IS NULL)" + 
+"\r\n AND (E.TEXT_INT=:TEXT_INT OR :TEXT_INT IS NULL)" + 
+"\r\n AND (E.CODE_EXT=:CODE_EXT OR :CODE_EXT IS NULL)" + 
+"\r\n AND (E.TEXT_EXT=:TEXT_EXT OR :TEXT_EXT IS NULL)" + 
+"\r\n AND (E.SYS=:SYS OR :SYS IS NULL)" + 
+"\r\n AND (E.TASK=:TASK OR :TASK IS NULL)" + 
+"\r\n AND (E.HANDLING=:HANDLING OR :HANDLING IS NULL)" + 
+"\r\n AND (rownum<=:MAX_ROWS OR :MAX_ROWS IS NULL)" + 
+"\r\n AND (E.EO_ID>=:MAX_VAL OR :MAX_VAL IS NULL)" + 
+"\r\n AND rownum <= 10" + 
+"\r\n ORDER BY E.EO_ID" 
+
+,"query.SO_TYPE_ID","query.SO_TYPE_ID"
+,"query.STATUS","query.STATUS"
+,"query.SPECIAL_ORDER_FLAG_ID","query.SPECIAL_ORDER_FLAG_ID"
+,"query.INC_TEXT_SHORT","query.INC_TEXT_SHORT"
+//,"query.INC_TEXT_LONG","query.INC_TEXT_LONG"
+,"query.CODE_INT","query.CODE_INT"
+,"query.TEXT_INT","query.TEXT_INT"
+,"query.CODE_EXT","query.CODE_EXT"
+,"query.TEXT_EXT","query.TEXT_EXT"
+,"query.SYS","query.SYS"
+,"query.TASK","query.TASK"
+,"query.HANDLING","query.HANDLING"
 ,"query.MAX_ROWS","query.MAX_ROWS"
 ,"query.MAX_VAL","query.MAX_VAL"
 )
-
+// listet TOP 10 ohne Filter
 mrouter(thisArg, "/", "SELECT \
 'SELECT/',XA.SO_TYPE_ID, XA.STATUS \
 ,SOF.SPECIAL_ORDER_FLAG_ID, SOF.NAME \

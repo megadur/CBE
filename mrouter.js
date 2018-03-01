@@ -59,7 +59,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                 outFormat: oracledb.OBJECT // Return the result as Object
             }, function (err, result) {
                 if (err) {
-                    console.log(fdt + " mrouter:  err " + err);
+                    log( " mrouter:  err " + err);
 
                     res.set('Content-Type', 'application/json');
                     res.status(500).send(JSON.stringify({
@@ -134,15 +134,12 @@ module.exports = function (arg, selector, sSQL, ...params) {
                             detailed_message: err.message
                         }));
                     } else {
-                        var dateTime = require('node-datetime');
-                        var dt = dateTime.create();
-                        var formatted = dt.format('Y-m-d H:M:S');
-                        console.log(formatted + " Connection POST: " + selector);
+                        log( " Connection POST: " + selector);
 
                         // Successfully created the resource
                         res.status(201).set('Location', '/user_profiles/' + req.body.USER_NAME).end();
-                        console.log(formatted + " POST " + selector + "(" + reqparams + ") = length " + result.rows.length);
-                        console.log(formatted + " SQL " + sSQL);
+                        log( " POST " + selector + "(" + reqparams + ") = length " + result.rows.length);
+                        log(" SQL " + sSQL);
                     }
                     // Release the connection
                     connection.release(
@@ -150,7 +147,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                             if (err) {
                                 console.error(err.message);
                             } else {
-                                console.log("POST /user_profiles : Connection released");
+                                log("POST /user_profiles : Connection released");
                             }
                         });
                 });
@@ -196,10 +193,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                             detailed_message: err ? err.message : ""
                         }));
                     } else {
-                        var dateTime = require('node-datetime');
-                        var dt = dateTime.create();
-                        var formatted = dt.format('Y-m-d H:M:S');
-                        console.log(formatted + " Connection PUT: " + router.String);
+                        log( " Connection PUT: " + router.String);
                         // Resource successfully updated. Sending an empty response body. 
                         res.status(204).end();
                     }
@@ -209,7 +203,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                             if (err) {
                                 console.error(err.message);
                             } else {
-                                console.log("PUT /user_profiles/" + req.params.USER_NAME + " : Connection released ");
+                                log("PUT /user_profiles/" + req.params.USER_NAME + " : Connection released ");
                             }
                         });
                 });

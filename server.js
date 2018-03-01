@@ -62,6 +62,7 @@ app.use('/xbestand', require('./svc/xbestand.router'));
 app.use('/xmessage', require('./svc/xmessage.router'));
 app.use('/xerror', require('./svc/xerror.router'));
 app.use('/fb', require('./svc/fehlerbild.router'));
+app.use('/fbs', require('./svc/fb.router'));
 
 app.get('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get config');

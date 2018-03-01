@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var express = require('express')
 
 const path = require('path')
-const dbPath = path.resolve(__dirname, '../data/fb.db')
+const dbPath = path.resolve(__dirname, '../data/cbe.db')
 let db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.log('sqlite3.Database:' + dbPath);
@@ -13,64 +13,40 @@ let db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 // Create the express router object for Photos
-var fbRouter = express.Router();
+var fehlerbildRouter = express.Router();
 
 // A GET to the root of a resource returns a list of that resource
-fbRouter.get('/', lookupFB, function (req, res) {
+fehlerbildRouter.get('/', lookupFB, function (req, res) {
     res.json(req.fbs);
 });
 
 // A POST to the root of a resource should create a new object
-fbRouter.post('/', insertFB_ByPar, function (req, res) {
+fehlerbildRouter.post('/', insertFB_ByPar, function (req, res) {
     res.json(req.fb);
 });
 // We specify a param in our path for the GET of a specific object
-fbRouter.get('/:id', lookupFB_ByID, function (req, res) {
+fehlerbildRouter.get('/:id', lookupFB_ByID, function (req, res) {
     res.json(req.fb);
 });
 
 // Similar to the GET on an object, to update it we can PATCH
-fbRouter.patch('/:id', lookupFB_ByID, function (req, res) {});
+fehlerbildRouter.patch('/:id', lookupFB_ByID, function (req, res) {});
 
 // Delete a specific object
-fbRouter.delete('/:id',  deleteFB_ByID, function (req, res) {    
+fehlerbildRouter.delete('/:id', deleteFB_ByID, function (req, res) {
     res.json(req.fb);
 });
 
 function insertFB_ByPar(req, res, next) {
-    //var sql = 'INSERT INTO fehlerbild (FLT_BILDNUMMER, FLT_CODE_INT, FLT_TEXT_EXT) VALUES (?, ?, ?)';
-    var sSql = 'INSERT INTO Fehlerbild ('
-    sSql = sSql + 'FLT_BILDNUMMER, FLT_SO_TYPE_ID, FLT_STATUS, FLT_SPECIAL_ORDER_FLAG_ID, FLT_INC_TEXT_SHORT, FLT_INC_TEXT_LONG, FLT_CODE_INT, FLT_TEXT_INT, FLT_CODE_EXT, FLT_TEXT_EXT, FLT_SYS, FLT_TASK, FLT_HANDLING, ';
-    sSql = sSql + 'KATEGORIE, STATUS, SYSTEM, BEDINGUNG, URSACHE, ERSTELLT_TS, ERSTELLT_NAME, GEAENDERT_TS, GEAENDERT_NAME, GUELTIG_VON_TS, GUELTIG_BIS_TS';
+    var sSql = 'INSERT INTO FEHLERBILD('
+    sSql = sSql + 'BILDNUMMER, FLT_SO_TYPE_ID, FLT_STATUS, FLT_SPECIAL_ORDER_FLAG_ID, FLT_INC_TEXT_SHORT, FLT_INC_TEXT_LONG, FLT_CODE_INT, FLT_TEXT_INT, FLT_CODE_EXT, FLT_TEXT_EXT, FLT_SYS, FLT_TASK, FLT_HANDLING ';
+    sSql = sSql + ', STATUS, PRIO, SYMPTOM, LOESUNG, AUSLOESER, BESCHREIBUNG, ERSTELLT_TS, GEAENDERT_TS ';
     sSql = sSql + ') VALUES(';
-    sSql = sSql + '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
-    sSql = sSql +  ');';
+    sSql = sSql + '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
+    sSql = sSql + ');';
     // Retrieve the data to insert from the POST body
     var data = [
-        req.body.FLT_BILDNUMMER, 
-        req.body.FLT_SO_TYPE_ID, 
-        req.body.FLT_STATUS, 
-        req.body.FLT_SPECIAL_ORDER_FLAG_ID, 
-        req.body.FLT_INC_TEXT_SHORT, 
-        req.body.FLT_INC_TEXT_LONG, 
-        req.body.FLT_CODE_INT, 
-        req.body.FLT_TEXT_INT, 
-        req.body.FLT_CODE_EXT, 
-        req.body.FLT_TEXT_EXT, 
-        req.body.FLT_SYS, 
-        req.body.FLT_TASK, 
-        req.body.FLT_HANDLING, 
-        req.body.KATEGORIE, 
-        req.body.STATUS, 
-        req.body.SYSTEM, 
-        req.body.BEDINGUNG, 
-        req.body.URSACHE, 
-        req.body.ERSTELLT_TS, 
-        req.body.ERSTELLT_NAME, 
-        req.body.GEAENDERT_TS, 
-        req.body.GEAENDERT_NAME, 
-        req.body.GUELTIG_VON_TS, 
-        req.body.GUELTIG_BIS_TS
+        req.body.BILDNUMMER, req.body.FLT_SO_TYPE_ID, req.body.FLT_STATUS, req.body.FLT_SPECIAL_ORDER_FLAG_ID, req.body.FLT_INC_TEXT_SHORT, req.body.FLT_INC_TEXT_LONG, req.body.FLT_CODE_INT, req.body.FLT_TEXT_INT, req.body.FLT_CODE_EXT, req.body.FLT_TEXT_EXT, req.body.FLT_SYS, req.body.FLT_TASK, req.body.FLT_HANDLING, req.body.STATUS, req.body.PRIO, req.body.SYMPTOM, req.body.LOESUNG, req.body.AUSLOESER, req.body.BESCHREIBUNG, req.body.ERSTELLT_TS, req.body.GEAENDERT_TS
     ];
     console.error(sSql);
     db.run(sSql, data, function (err, result) {
@@ -99,10 +75,34 @@ function lookupFB(req, res, next) {
     //console.log('req.query.FLT_EO_ID=' + req.query.FLT_EO_ID);
     sSQL = ' SELECT * FROM fehlerbild '
     sSQL = sSQL + ' WHERE 1=1 '
-    if (req.query.FLT_BILDNUMMER) {sSQL = sSQL + ' AND FLT_BILDNUMMER LIKE ? '; data.push( '%' +req.query.FLT_BILDNUMMER + '%');}
-    if (req.query.FLT_SO_TYPE_ID) {sSQL = sSQL + ' AND FLT_SO_TYPE_ID LIKE ? '; data.push( '%' +req.query.FLT_SO_TYPE_ID + '%');}
-    if (req.query.FLT_STATUS) {sSQL = sSQL + ' AND FLT_STATUS LIKE ? '; data.push( '%' +req.query.FLT_STATUS + '%');}
-     // sSQL = sSQL + ' LIMIT 1'
+    /*
+    if (req.query.BILDNUMMER) {sSQL = sSQL + ' AND BILDNUMMER LIKE ? ';data.push('%' + req.query.BILDNUMMER + '%');}
+    if (req.query.FLT_SO_TYPE_ID) { sSQL = sSQL + ' AND FLT_SO_TYPE_ID LIKE ? '; data.push('%' + req.query.FLT_SO_TYPE_ID + '%');}
+    if (req.query.FLT_STATUS) {sSQL = sSQL + ' AND FLT_STATUS LIKE ? ';data.push('%' + req.query.FLT_STATUS + '%');}
+*/
+    if (req.query.ID) { sSQL = sSQL + ' AND ID? '; data.push('%' + req.queryID + '%');}
+    if (req.query.BILDNUMMER) { sSQL = sSQL + ' AND BILDNUMMERLIKE ? '; data.push('%' + req.query.BILDNUMMER + '%');}
+    if (req.query.FLT_SO_TYPE_ID) { sSQL = sSQL + ' AND FLT_SO_TYPE_ID LIKE ?  '; data.push('%' + req.query.FLT_SO_TYPE_ID + '%');}
+    if (req.query.FLT_STATUS) { sSQL = sSQL + ' AND FLT_STATUS LIKE ?  '; data.push('%' + req.query.FLT_STATUS + '%');}
+    if (req.query.FLT_SPECIAL_ORDER_FLAG_ID) { sSQL = sSQL + ' AND FLT_SPECIAL_ORDER_FLAG_ID LIKE ?  '; data.push('%' + req.query.FLT_SPECIAL_ORDER_FLAG_ID + '%');}
+    if (req.query.FLT_INC_TEXT_SHORT) { sSQL = sSQL + ' AND FLT_INC_TEXT_SHORT LIKE ?  '; data.push('%' + req.query.FLT_INC_TEXT_SHORT + '%');}
+    if (req.query.FLT_INC_TEXT_LONG) { sSQL = sSQL + ' AND FLT_INC_TEXT_LONG LIKE ?  '; data.push('%' + req.query.FLT_INC_TEXT_LONG + '%');}
+    if (req.query.FLT_CODE_INT) { sSQL = sSQL + ' AND FLT_CODE_INT LIKE ?  '; data.push('%' + req.query.FLT_CODE_INT + '%');}
+    if (req.query.FLT_TEXT_INT) { sSQL = sSQL + ' AND FLT_TEXT_INT LIKE ?  '; data.push('%' + req.query.FLT_TEXT_INT + '%');}
+    if (req.query.FLT_CODE_EXT) { sSQL = sSQL + ' AND FLT_CODE_EXT LIKE ?  '; data.push('%' + req.query.FLT_CODE_EXT + '%');}
+    if (req.query.FLT_TEXT_EXT) { sSQL = sSQL + ' AND FLT_TEXT_EXT LIKE ?  '; data.push('%' + req.query.FLT_TEXT_EXT + '%');}
+    if (req.query.FLT_SYS) { sSQL = sSQL + ' AND FLT_SYS LIKE ?  '; data.push('%' + req.query.FLT_SYS + '%');}
+    if (req.query.FLT_TASK) { sSQL = sSQL + ' AND FLT_TASK LIKE ?  '; data.push('%' + req.query.FLT_TASK + '%');}
+    if (req.query.FLT_HANDLING) { sSQL = sSQL + ' AND FLT_HANDLING LIKE ?  '; data.push('%' + req.query.FLT_HANDLING + '%');}
+    if (req.query.STATUS) { sSQL = sSQL + ' AND STATUS LIKE ?  '; data.push('%' + req.query.STATUS + '%');}
+    if (req.query.PRIO) { sSQL = sSQL + ' AND PRIO LIKE ?  '; data.push('%' + req.query.PRIO + '%');}
+    if (req.query.SYMPTOM) { sSQL = sSQL + ' AND SYMPTOM LIKE ?  '; data.push('%' + req.query.SYMPTOM + '%');}
+    if (req.query.LOESUNG) { sSQL = sSQL + ' AND LOESUNG LIKE ?  '; data.push('%' + req.query.LOESUNG + '%');}
+    if (req.query.AUSLOESER) { sSQL = sSQL + ' AND AUSLOESER LIKE ?  '; data.push('%' + req.query.AUSLOESER + '%');}
+    if (req.query.BESCHREIBUNG) { sSQL = sSQL + ' AND BESCHREIBUNG LIKE ?  '; data.push('%' + req.query.BESCHREIBUNG + '%');}
+    if (req.query.ERSTELLT_TS) { sSQL = sSQL + ' AND ERSTELLT_TS LIKE ?  '; data.push('%' + req.query.ERSTELLT_TS + '%');}
+    if (req.query.GEAENDERT_TS) { sSQL = sSQL + ' AND GEAENDERT_TS LIKE ?  '; data.push('%' + req.query.GEAENDERT_TS + '%');}
+        // sSQL = sSQL + ' LIMIT 1'
     console.log('lookupFB sSQL=' + sSQL);
     console.log('lookupFB data=' + data);
     // Build an SQL query to select the resource object by ID
@@ -185,4 +185,4 @@ function deleteFB_ByID(req, res, next) {
     });
 }
 
-module.exports = fbRouter;
+module.exports = fehlerbildRouter;
