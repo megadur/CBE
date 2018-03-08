@@ -38,7 +38,7 @@ mrouter(thisArg, "",
 "\r\n  'SELECT' AS QT" + 
 "\r\n, 'ET3' AS QE" + 
 "\r\n, E.*" + 
-"\r\n, AI.SO_ID" + 
+"\r\n, AI.*" + 
 "\r\n, AX.EO_ID" + 
 "\r\n FROM IDMA_AUFTRAGS_OPDB_DATA.X_ERROR E" + 
 "\r\n LEFT JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG AI ON E.SO_ID=AI.SO_ID" + 

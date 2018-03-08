@@ -27,9 +27,9 @@ module.exports = function (arg, selector, sSQL, ...params) {
     router.get(selector, function (req, res) {
         "use strict";
                 
-        log( " mrouter: db.connectString: " + db.getConn().connectString);
+        log( "mrouter get: db.connectString: " + db.getConn().connectString);
         connAttrs = db.getConn();
-        log(  " mrouter: router.get.connectString: " + connAttrs.connectString);
+        log(  "mrouter get: router.get.connectString: " + connAttrs.connectString);
 
         oracledb.getConnection(connAttrs, function (err, connection) {
             if (err) {
@@ -37,7 +37,7 @@ module.exports = function (arg, selector, sSQL, ...params) {
                 res.set('Content-Type', 'application/json');
                 res.status(500).send(JSON.stringify({
                     status: 500,
-                    message: fdt +  " mrouter: Error connecting to DB",
+                    message: " mrouter: Error connecting to DB",
                     detailed_message: err.message
                 }));
                 return;

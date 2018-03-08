@@ -17,16 +17,33 @@ var thisArg = {
     connAttrs: connAttrs
 };
 
-mrouter(thisArg, "", "SELECT XM.*, \
- dbms_lob.substr(XM.MESSAGE, 4000, 1) AS MSG \
- FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
-WHERE 1=1 \
-AND (XM.ID=:MSG_ID OR :MSG_ID IS NULL)  \
-AND (XM.SO_ID=:SO_ID OR :SO_ID IS NULL)  \
-AND  rownum <= 11 \
+mrouter(thisArg, "", "SELECT   'X_MESSAGES' AS TBL, XM.*, \
+dbms_lob.substr( XM.MESSAGE, dbms_lob.getlength(XM.MESSAGE), 1)  AS MSG \
+ \r\n  FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
+ \r\n WHERE 1=1 \
+ \r\n AND (XM.ID=:MSG_ID OR :MSG_ID IS NULL)  \
+ \r\n AND (XM.SO_ID=:SO_ID OR :SO_ID IS NULL)  \
+ \r\n AND (XM.EO_ID=:EO_ID OR :EO_ID IS NULL)  \
+ \r\n AND  rownum <= 11 \
+ \r\n ORDER BY XM.ID \
 "
 , "query.MSG_ID","query.MSG_ID"
 , "query.SO_ID","query.SO_ID"
+, "query.EO_ID","query.EO_ID"
+)
+mrouter(thisArg, "/MSG", " SELECT  \
+dbms_lob.substr( XM.MESSAGE, dbms_lob.getlength(XM.MESSAGE), 1)  \
+ \r\n  FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
+ \r\n WHERE 1=1 \
+ \r\n AND (XM.ID=:MSG_ID OR :MSG_ID IS NULL)  \
+ \r\n AND (XM.SO_ID=:SO_ID OR :SO_ID IS NULL)  \
+ \r\n AND (XM.EO_ID=:EO_ID OR :EO_ID IS NULL)  \
+ \r\n AND  rownum <= 11 \
+ \r\n ORDER BY XM.ID \
+"
+, "query.MSG_ID","query.MSG_ID"
+, "query.SO_ID","query.SO_ID"
+, "query.EO_ID","query.EO_ID"
 )
 
 

@@ -16,8 +16,10 @@ var thisArg = {
     oracledb: oracledb,
     connAttrs: connAttrs
 };
+/*
 
-mrouter(thisArg, "/", "SELECT  'X_AUFTRAG_EXT' AS TBL, A.TO_NR, AX.*  \
+*/
+mrouter(thisArg, "/", "SELECT DISTINCT  'X_AUFTRAG_EXT' AS TBL, A.TO_NR, AX.*  \
 \r\n FROM IDMA_AUFTRAGS_OPDB_DATA.X_ACCOUNT_INFO AI \
 \r\n INNER JOIN IDMA_BESTANDS_OPDB_DATA.X_ACCOUNT A ON A.TO_NR=AI.TO_NR \
 \r\n INNER JOIN IDMA_AUFTRAGS_OPDB_DATA.X_AUFTRAG_EXT AX ON AX.EO_ID=AI.O_ID \
