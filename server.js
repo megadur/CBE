@@ -60,16 +60,17 @@ app.use('/xauftrag', require('./svc/xauftrag.router'));
 app.use('/xauftragext', require('./svc/xauftragext.router'));
 app.use('/xbestand', require('./svc/xbestand.router'));
 app.use('/xmessage', require('./svc/xmessage.router'));
+app.use('/xmessages', require('./svc/xmessage.router'));
 app.use('/xerror', require('./svc/xerror.router'));
 app.use('/fb', require('./svc/fehlerbild.router'));
-app.use('/fbs', require('./svc/fb.router'));
+//app.use('/fbs', require('./svc/fb.router'));
 
 app.get('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'
     console.log('app.get config');
     console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
     console.log("req.baseUrl:" + req.baseUrl); // '/admin'
     console.log("req.path:" + req.path); // '/new'
-    
+
     // TODO: res.send(JSON.stringify(db.getConn()));
     res.send(JSON.stringify(db.setConn(req.query.db_name)));
     next();
@@ -79,7 +80,7 @@ app.put('/config', function (req, res, next) { // GET 'http://www.example.com/ad
     console.log("req.originalUrl:" + req.originalUrl); // '/admin/new'
     console.log("req.baseUrl:" + req.baseUrl); // '/admin'
     console.log("req.path:" + req.path); // '/new'
-    
+
     res.send(JSON.stringify(db.setConn(req.query.db_name)));
     next();
 });
@@ -103,6 +104,28 @@ app.post('/admin', function (req, res, next) { // GET 'http://www.example.com/ad
 
 //app.use('/where/ever', require('./module-b'));    
 
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
 
 var server = app.listen(3300, function () {
     "use strict";

@@ -53,7 +53,7 @@ router.get('/MSG', function (req, res) {
     var TONR = req.query.TONR;
     var KDNR = req.query.KDNR;
     var STID = req.query.STID;
-    console.log('router.getMSG:', GUID, TONR, KDNR, STID);
+    console.log('router.get/MSG:', GUID, TONR, KDNR, STID);
     var r = getBestandListByPar(connAttrs, GUID, TONR, KDNR, STID, false, true, function (xbestandList) {
         console.log('call getBestandListByGuid()) ');
         res.send(JSON.stringify(xbestandList));
