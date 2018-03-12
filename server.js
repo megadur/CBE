@@ -60,7 +60,7 @@ app.use('/xauftrag', require('./svc/xauftrag.router'));
 app.use('/xauftragext', require('./svc/xauftragext.router'));
 app.use('/xbestand', require('./svc/xbestand.router'));
 app.use('/xmessage', require('./svc/xmessage.router'));
-app.use('/xmessages', require('./svc/xmessage.router'));
+app.use('/xmessages', require('./svc/xmessages.router'));
 app.use('/xerror', require('./svc/xerror.router'));
 app.use('/fb', require('./svc/fehlerbild.router'));
 //app.use('/fbs', require('./svc/fb.router'));

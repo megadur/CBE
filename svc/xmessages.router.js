@@ -17,10 +17,11 @@ var thisArg = {
     connAttrs: connAttrs
 };
 
-mrouter(thisArg, "", "SELECT   'X_MESSAGES' AS TBL, XM.*, \
-dbms_lob.substr( XM.MESSAGE, dbms_lob.getlength(XM.MESSAGE), 1)  AS MSG \
- \r\n  FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
- \r\n WHERE 1=1 \
+// dbms_lob.substr( XM.MESSAGE, dbms_lob.getlength(XM.MESSAGE), 1)  AS MSG \
+mrouter(thisArg, "", "SELECT   'X_MESSAGES' AS TBL \
+\r\n  , XM.*, (CASE WHEN INSTR(XM.SERVICE, '.')>0 THEN 'WS' ELSE 'QUEUE'  END)  AS TYPE \
+\r\n  FROM IDMA_AUFTRAGS_DISPDB_DATA.X_MESSAGES XM \
+\r\n WHERE 1=1 \
  \r\n AND (XM.ID=:MSG_ID OR :MSG_ID IS NULL)  \
  \r\n AND (XM.SO_ID=:SO_ID OR :SO_ID IS NULL)  \
  \r\n AND (XM.EO_ID=:EO_ID OR :EO_ID IS NULL)  \

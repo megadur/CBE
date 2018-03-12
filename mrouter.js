@@ -46,8 +46,8 @@ module.exports = function (arg, selector, sSQL, ...params) {
 
             // console.log( " params: " + params);
             var reqparams = generateParams(req, params);
-             log( " sSQL: " + sSQL);
-             log( " reqparams " + reqparams);
+            // log( " sSQL: " + sSQL);
+            // log( " reqparams " + reqparams);
 
             /*
             connection.execute(sSQL, reqparams, {

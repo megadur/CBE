@@ -77,7 +77,7 @@ function getMsgs_ByEoId(connAttrs, EO_ID, callback) {
             for (i in xmlist) {
                 var r = xmlist[i];
                 let msg = await getMsg_ById(r.ID, connection);
-                console.log('getMsg_ById: ', r.ID, msg.length);
+                // console.log('getMsg_ById: ', r.ID, msg.length);
                 msgList[i] = {
                     MSG: msg,
                     ID: r.ID,

@@ -28,6 +28,7 @@ var thisArg = {
     oracledb: oracledb,
     connAttrs: connAttrs
 };
+
 /*
 // listet TOP 10 mit  Filter
 mrouter(thisArg, "", "SELECT " +
