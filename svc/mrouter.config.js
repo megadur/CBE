@@ -3,8 +3,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var oracledb = require('oracledb');
 
-var mrouter = require("../mrouter");
-
+var mrouter = require("./mrouter");
 
 var thisArg = {
     router: router,

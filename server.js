@@ -52,17 +52,18 @@ app.get('/account', function(req, res) {
 //app.get('/', ....)
 
 // Attach the routers for their respective paths
-app.use('/account', require('./svc/account.router'));
-app.use('/auftrag', require('./svc/auftrag.router'));
-app.use('/kampagne', require('./svc/kampagne.router'));
-app.use('/bestand', require('./svc/bestand.router'));
-app.use('/xauftrag', require('./svc/xauftrag.router'));
-app.use('/xauftragext', require('./svc/xauftragext.router'));
-app.use('/xbestand', require('./svc/xbestand.router'));
-app.use('/xmessage', require('./svc/xmessage.router'));
-app.use('/xmessages', require('./svc/xmessages.router'));
-app.use('/xerror', require('./svc/xerror.router'));
-app.use('/fb', require('./svc/fehlerbild.router'));
+app.use('/account', require('./svc/mrouter.account'));
+app.use('/auftrag', require('./svc/mrouter.auftrag'));
+app.use('/bestand', require('./svc/router.bestand'));
+app.use('/kampagne', require('./svc/mrouter.kampagne'));
+app.use('/katalog', require('./svc/router.katalog'));
+app.use('/xauftrag', require('./svc/mrouter.xauftrag'));
+app.use('/xauftragext', require('./svc/mrouter.xauftragext'));
+app.use('/xbestand', require('./svc/router.xbestand'));
+app.use('/xmessage', require('./svc/router.xmessage'));
+app.use('/xmessages', require('./svc/mrouter.xmessages'));
+app.use('/xerror', require('./svc/mrouter.xerror'));
+app.use('/fb', require('./svc/router.fehlerbild'));
 //app.use('/fbs', require('./svc/fb.router'));
 
 app.get('/config', function (req, res, next) { // GET 'http://www.example.com/admin/new'

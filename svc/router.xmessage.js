@@ -16,9 +16,7 @@ router.get('/', function (req, res) {
     console.log('xmessage.router.get/MSG:', msgid, eoid);
     if (msgid) {
         var r = getMsg_ById(connAttrs, msgid, function (x) {
-            // console.log('getMsg_ById() ret ', x);
-            res.set('Content-Type', 'text/xml');
-            res.send(x);
+            res.send(JSON.stringify(x));
             return;
 
         });
